@@ -9,13 +9,22 @@ import mongoose from 'mongoose';
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
-      autoIndex: true
+    const uri = process.env.MONGODB_URI; // ✅ correct name
+
+    if (!uri) {
+      throw new Error('MONGODB_URI is not defined');
+    }
+
+    console.log('🔌 Connecting to MongoDB...');
+
+    const conn = await mongoose.connect(uri, {
+      autoIndex: true,
+      authSource: 'admin', // ✅ critical
     });
 
-    console.log(`MongoDB connected: ${conn.connection.host}`);
+    console.log(`✅ MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error('MongoDB connection error:', error.message);
+    console.error('❌ MongoDB connection error:', error.message);
     process.exit(1);
   }
 };
